@@ -10,11 +10,16 @@ final class Post extends Model
     public static function make(string $markdownContent, string $htmlContent, User $user): self
     {
         $instance = new self;
-        $instance->attributes['markdown_content'] = $markdownContent;
-        $instance->attributes['html_content'] = $htmlContent;
+        $instance->updateContent($markdownContent, $htmlContent);
         $instance->user()->associate($user);
 
         return $instance;
+    }
+
+    public function updateContent(string $markdownContent, string $htmlContent): void
+    {
+        $this->attributes['markdown_content'] = $markdownContent;
+        $this->attributes['html_content'] = $htmlContent;
     }
 
     public function user(): BelongsTo

@@ -14,4 +14,5 @@ Route::get('/logout', [Controllers\AuthController::class, 'logout'])->name('logo
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [Controllers\AdminController::class, 'index']);
     Route::get('/admin/{id}', [Controllers\AdminPostsController::class, 'get']);
+    Route::post('/admin/{id}', [Controllers\AdminPostsController::class, 'update']);
 });
