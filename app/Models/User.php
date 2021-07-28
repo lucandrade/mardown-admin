@@ -37,4 +37,13 @@ class User extends Model implements
     protected $hidden = [
         'password',
     ];
+
+    public static function make(string $username, string $password): self
+    {
+        $instance = new self;
+        $instance->attributes['username'] = $username;
+        $instance->attributes['password'] = bcrypt($password);
+
+        return $instance;
+    }
 }
