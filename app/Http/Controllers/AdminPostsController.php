@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AdminPostsController extends Controller
@@ -33,5 +35,19 @@ final class AdminPostsController extends Controller
         $post->save();
 
         return redirect("/admin/{$id}")->with('success', 'Post created');
+    }
+
+    public function create(Request $request): Response
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $post = Post::make(
+            $request->input('markdown_content'),
+            $request->input('html_content'),
+            $user
+        );
+        $post->save();
+
+        return redirect("/admin/{$post->id}")->with('success', 'Post created');
     }
 }
