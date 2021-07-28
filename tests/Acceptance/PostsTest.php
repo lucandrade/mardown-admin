@@ -81,6 +81,30 @@ final class PostsTest extends TestCase
             ->assertSessionHasErrorsIn('default');
     }
 
+    /**
+     * @test
+     */
+    public function it_can_create_a_post()
+    {
+        $user = $this->login();
+
+        $response = $this->post("/admin/", [
+            'markdown_content' => 'First markdown created post',
+            'html_content' => 'First created post',
+        ]);
+
+        /** @var Post $post */
+        $post = Post::first();
+
+        $response
+            ->assertRedirect("/admin/{$post->id}")
+            ->assertSessionHas('success');
+
+        $this->assertThat($post->user->id, $this->identicalTo($user->id));
+        $this->assertThat($post->markdown_content, $this->identicalTo('First markdown created post'));
+        $this->assertThat($post->html_content, $this->identicalTo('First created post'));
+    }
+
     private function login(): User
     {
         $user = User::make('username', 'password');
