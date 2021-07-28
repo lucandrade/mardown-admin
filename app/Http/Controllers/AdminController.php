@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+
 final class AdminController extends Controller
 {
     public function index()
     {
-        return view('welcome');
+        return view('posts', [
+            'posts' => Post::all(),
+        ]);
     }
 }
