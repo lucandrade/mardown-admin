@@ -10,13 +10,13 @@ final class AuthController extends Controller
 {
     public function login(Request $request): Response
     {
-        $authenticated = Auth::attempt([
-            'username' => $request->input('username'),
-            'password' => $request->input('password'),
+        $credentials = $request->validate([
+            'username' => 'required',
+            'password' => 'required',
         ]);
 
-        if (!$authenticated) {
-            return redirect('/login')->with('error', 'Invalid credentials');
+        if (!Auth::attempt($credentials)) {
+            return redirect('/login')->withErrors(['Invalid credentials']);
         }
 
         return redirect('/admin');

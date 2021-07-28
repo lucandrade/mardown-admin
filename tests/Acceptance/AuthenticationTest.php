@@ -61,4 +61,27 @@ final class AuthenticationTest extends TestCase
         $response
             ->assertRedirect('/login');
     }
+
+    /**
+     * @test
+     */
+    public function it_adds_validation_error_for_empty_form()
+    {
+        $response = $this->post('/login');
+        $response
+            ->assertSessionHasErrors(['username', 'password']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_adds_validation_error_for_invalid_credentials()
+    {
+        $response = $this->post('/login', [
+            'username' => 'us',
+            'password' => 'us',
+        ]);
+        $response
+            ->assertSessionHasErrorsIn('default');
+    }
 }
