@@ -10,7 +10,6 @@ final class PostTest extends TestCase
 {
     /**
      * @test
-     * @group debug
      */
     public function it_can_creat_a_post()
     {
