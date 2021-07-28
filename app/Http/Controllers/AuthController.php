@@ -21,4 +21,13 @@ final class AuthController extends Controller
 
         return redirect('/admin');
     }
+
+    public function logout(): Response
+    {
+        if (Auth::check()) {
+            Auth::logout();
+        }
+
+        return redirect('/login');
+    }
 }

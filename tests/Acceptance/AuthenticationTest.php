@@ -41,4 +41,24 @@ final class AuthenticationTest extends TestCase
         $response
             ->assertRedirect('/admin');
     }
+
+    /**
+     * @test
+     */
+    public function it_blocks_access_after_logout()
+    {
+        $user = User::make('username', 'password');
+        $user->save();
+
+        $this->post('/login', [
+            'username' => 'username',
+            'password' => 'password',
+        ]);
+        $response = $this->get('/logout');
+        $response
+            ->assertRedirect('/login');
+        $response = $this->get('/admin');
+        $response
+            ->assertRedirect('/login');
+    }
 }
