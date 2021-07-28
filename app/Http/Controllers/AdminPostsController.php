@@ -28,6 +28,15 @@ final class AdminPostsController extends Controller
             return redirect('/admin')->withErrors(['Post not found']);
         }
 
+        $data = $request->validate([
+            'markdown_content' => 'required',
+            'html_content' => 'required',
+        ]);
+
+        if (!$data) {
+            return redirect("/admin/{$id}");
+        }
+
         $post->updateContent(
             strval($request->input('markdown_content')),
             strval($request->input('html_content'))
@@ -39,6 +48,15 @@ final class AdminPostsController extends Controller
 
     public function create(Request $request): Response
     {
+        $data = $request->validate([
+            'markdown_content' => 'required',
+            'html_content' => 'required',
+        ]);
+
+        if (!$data) {
+            return redirect("/admin/create");
+        }
+
         /** @var User $user */
         $user = Auth::user();
         $post = Post::make(

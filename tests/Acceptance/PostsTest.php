@@ -72,6 +72,19 @@ final class PostsTest extends TestCase
     /**
      * @test
      */
+    public function it_adds_validation_error_for_empty_form()
+    {
+        $post = Post::make('First markdown post', 'First post', $this->login());
+        $post->save();
+
+        $response = $this->post("/admin/{$post->id}");
+        $response
+            ->assertSessionHasErrors(['markdown_content', 'html_content']);
+    }
+
+    /**
+     * @test
+     */
     public function it_redirects_to_admin_page_when_post_is_not_found()
     {
         $this->login();
@@ -103,6 +116,19 @@ final class PostsTest extends TestCase
         $this->assertThat($post->user->id, $this->identicalTo($user->id));
         $this->assertThat($post->markdown_content, $this->identicalTo('First markdown created post'));
         $this->assertThat($post->html_content, $this->identicalTo('First created post'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_adds_validation_error_for_empty_form_when_creating_a_post()
+    {
+        $this->login();
+
+        $response = $this->post("/admin/");
+
+        $response
+            ->assertSessionHasErrors(['markdown_content', 'html_content']);
     }
 
     private function login(): User
