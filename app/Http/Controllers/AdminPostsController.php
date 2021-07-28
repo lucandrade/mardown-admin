@@ -10,6 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class AdminPostsController extends Controller
 {
+    public function index(): Response
+    {
+        return response(view('posts', [
+            'posts' => Post::all(),
+        ]));
+    }
+
     public function get(int $id): Response
     {
         $post = Post::find($id);
