@@ -3,6 +3,10 @@
 namespace Tests\Acceptance;
 
 use App\Models\User;
+use Illuminate\Contracts\Auth\Guard;
+use Mockery;
+use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthenticationTest extends TestCase
@@ -31,6 +35,37 @@ final class AuthenticationTest extends TestCase
      */
     public function it_redirects_to_admin_after_login()
     {
+        $user = User::make('username', 'password');
+        $user->save();
+
+        $response = $this->post('/login', [
+            'username' => 'username',
+            'password' => 'password',
+        ]);
+        $response
+            ->assertRedirect('/admin');
+    }
+
+    /**
+     * @test
+     */
+    public function it_logs_error_on_exception()
+    {
+        $this->instance(
+            Guard::class,
+            Mockery::mock(Guard::class, function (MockInterface $mock) {
+                $mock->shouldReceive('attempt')->once()->andReturnUsing(function () {
+                    throw new \Exception('Testing');
+                });
+            })
+        );
+
+        $this->instance(
+            LoggerInterface::class,
+            Mockery::mock(LoggerInterface::class, function (MockInterface $mock) {
+                $mock->shouldReceive('error')->once();
+            })
+        );
         $user = User::make('username', 'password');
         $user->save();
 
