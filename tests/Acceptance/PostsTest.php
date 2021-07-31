@@ -206,6 +206,27 @@ final class PostsTest extends TestCase
     /**
      * @test
      */
+    public function it_logs_error_when_a_post_create_fails()
+    {
+        $this->login();
+        $mock = Mockery::mock(Post::class)->makePartial();
+        $mock->shouldReceive('make')->once()->andReturn($mock);
+        $mock->shouldReceive('save')->once()->andReturnUsing(function () {
+            throw new \Exception('Testing');
+        });
+        $this->instance(
+            Post::class,
+            $mock
+        );
+        $this->post("/admin/", [
+            'markdown_content' => 'First markdown created post',
+            'html_content' => 'First created post',
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_adds_validation_error_for_empty_form_when_creating_a_post()
     {
         $this->login();

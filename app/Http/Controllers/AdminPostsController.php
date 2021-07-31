@@ -103,24 +103,36 @@ final class AdminPostsController extends Controller
 
     public function create(Request $request): Response
     {
-        $data = $request->validate([
-            'markdown_content' => 'required',
-            'html_content' => 'required',
-        ]);
+        try {
+            $data = $request->validate([
+                'markdown_content' => 'required',
+                'html_content' => 'required',
+            ]);
 
-        if (!$data) {
-            return redirect("/admin/create");
+            if (!$data) {
+                return redirect("/admin/create");
+            }
+
+            /** @var User $user */
+            $user = Auth::user();
+            $post = $this->repository->make(
+                $request->input('markdown_content'),
+                $request->input('html_content'),
+                $user
+            );
+            $post->save();
+
+            return redirect("/admin/{$post->id}")->with('success', 'Post created');
+        } catch (ValidationException $e) {
+            return redirect('/admin')->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            $this->logger->error("Error creating a post", [
+                "e" => $e->getMessage(),
+                "request" => $request,
+                "ex" => $e,
+            ]);
+
+            return redirect("/admin")->with('error', 'Unknown error occurred');
         }
-
-        /** @var User $user */
-        $user = Auth::user();
-        $post = Post::make(
-            $request->input('markdown_content'),
-            $request->input('html_content'),
-            $user
-        );
-        $post->save();
-
-        return redirect("/admin/{$post->id}")->with('success', 'Post created');
     }
 }
