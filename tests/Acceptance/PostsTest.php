@@ -126,6 +126,37 @@ final class PostsTest extends TestCase
     /**
      * @test
      */
+    public function it_logs_error_when_updating_a_post_fail()
+    {
+        $user = $this->login();
+
+        $post = Post::make('First markdown post', 'First post', $user);
+        $post->save();
+
+        $this->instance(
+            LoggerInterface::class,
+            Mockery::mock(LoggerInterface::class, function (MockInterface $mock) {
+                $mock->shouldReceive('error')->once();
+            })
+        );
+        $this->instance(
+            Post::class,
+            Mockery::mock(Post::class, function (MockInterface $mock) use ($post) {
+                $mock->shouldReceive('find')->with($post->id)->once()->andReturnUsing(function () {
+                    throw new \Exception('Testing');
+                });
+            })
+        );
+
+        $this->post("/admin/{$post->id}", [
+            'markdown_content' => 'Markdown changed',
+            'html_content' => 'HTML changed',
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_adds_validation_error_for_empty_form()
     {
         $post = Post::make('First markdown post', 'First post', $this->login());

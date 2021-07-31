@@ -65,29 +65,40 @@ final class AdminPostsController extends Controller
 
     public function update(int $id, Request $request): Response
     {
-        /** @var Post $post */
-        $post = Post::find($id);
+        try {
+            /** @var Post $post */
+            $post = $this->repository->find($id);
 
-        if (!$post) {
-            return redirect('/admin')->withErrors(['Post not found']);
+            if (!$post) {
+                return redirect('/admin')->withErrors(['Post not found']);
+            }
+
+            $data = $request->validate([
+                'markdown_content' => 'required',
+                'html_content' => 'required',
+            ]);
+
+            if (!$data) {
+                return redirect("/admin/{$id}");
+            }
+
+            $post->updateContent(
+                strval($request->input('markdown_content')),
+                strval($request->input('html_content'))
+            );
+            $post->save();
+
+            return redirect("/admin/{$id}")->with('success', 'Post created');
+        } catch (ValidationException $e) {
+            return redirect('/admin')->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            $this->logger->error("Error updating post", [
+                "post" => $id,
+                "e" => $e->getMessage(),
+                "ex" => $e,
+            ]);
+            return redirect('/admin')->withErrors(["Error updating post"]);
         }
-
-        $data = $request->validate([
-            'markdown_content' => 'required',
-            'html_content' => 'required',
-        ]);
-
-        if (!$data) {
-            return redirect("/admin/{$id}");
-        }
-
-        $post->updateContent(
-            strval($request->input('markdown_content')),
-            strval($request->input('html_content'))
-        );
-        $post->save();
-
-        return redirect("/admin/{$id}")->with('success', 'Post created');
     }
 
     public function create(Request $request): Response
