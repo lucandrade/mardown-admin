@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,15 +25,17 @@ final class AuthController extends Controller
 
     public function login(Request $request): Response
     {
-        $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
-
         try {
+            $credentials = $request->validate([
+                'username' => 'required',
+                'password' => 'required',
+            ]);
+
             if (!$this->auth->attempt($credentials)) {
                 return redirect('/login')->withErrors(['Invalid credentials']);
             }
+        } catch (ValidationException $e) {
+            return redirect('/login')->withErrors($e->errors());
         } catch (\Throwable $e) {
             $this->logger->error("Error validating user", [
                 "e" => $e->getMessage(),
