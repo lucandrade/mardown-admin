@@ -45,11 +45,22 @@ final class AdminPostsController extends Controller
 
     public function get(int $id): Response
     {
-        $post = Post::find($id);
+        try {
+            $post = $this->repository->find($id);
 
-        return response(view('post', [
-            'post' => $post,
-        ]), $post ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
+            return response(view('post', [
+                'post' => $post,
+            ]), $post ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
+        } catch (\Throwable $e) {
+            $this->logger->error("Error fetching post", [
+                "e" => $e->getMessage(),
+                "ex" => $e,
+            ]);
+
+            return response(view('post', [
+                'post' => [],
+            ]), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function update(int $id, Request $request): Response

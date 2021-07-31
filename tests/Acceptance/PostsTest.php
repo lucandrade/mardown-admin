@@ -66,6 +66,33 @@ final class PostsTest extends TestCase
     /**
      * @test
      */
+    public function it_logs_error_when_showing_a_post_fail()
+    {
+        $user = $this->login();
+        $post = Post::make('First markdown post', 'First post', $user);
+        $post->save();
+
+        $this->instance(
+            LoggerInterface::class,
+            Mockery::mock(LoggerInterface::class, function (MockInterface $mock) {
+                $mock->shouldReceive('error')->once();
+            })
+        );
+        $this->instance(
+            Post::class,
+            Mockery::mock(Post::class, function (MockInterface $mock) use ($post) {
+                $mock->shouldReceive('find')->with($post->id)->once()->andReturnUsing(function () {
+                    throw new \Exception('Testing');
+                });
+            })
+        );
+
+        $this->get("/admin/{$post->id}");
+    }
+
+    /**
+     * @test
+     */
     public function it_returns_404_for_not_found_post()
     {
         $this->login();
