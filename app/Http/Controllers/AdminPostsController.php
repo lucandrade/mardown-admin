@@ -6,15 +6,41 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AdminPostsController extends Controller
 {
+    /** @var LoggerInterface */
+    private $logger;
+
+    /** @var Post */
+    private $repository;
+
+    public function __construct(LoggerInterface $logger, Post $repository)
+    {
+        $this->logger = $logger;
+        $this->repository = $repository;
+    }
+
     public function index(): Response
     {
-        return response(view('posts', [
-            'posts' => Post::all(),
-        ]));
+        try {
+            $posts = $this->repository->all();
+
+            return response(view('posts', [
+                'posts' => $posts,
+            ]));
+        } catch (\Throwable $e) {
+            $this->logger->error("Error listing posts", [
+                "e" => $e->getMessage(),
+                "ex" => $e,
+            ]);
+            return response(view('posts', [
+                'posts' => [],
+            ]));
+        }
     }
 
     public function get(int $id): Response

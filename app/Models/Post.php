@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-final class Post extends Model
+class Post extends Model
 {
     public static function make(string $markdownContent, string $htmlContent, User $user): self
     {

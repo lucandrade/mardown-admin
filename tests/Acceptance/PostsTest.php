@@ -4,6 +4,9 @@ namespace Tests\Acceptance;
 
 use App\Models\Post;
 use App\Models\User;
+use Mockery;
+use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PostsTest extends TestCase
@@ -19,6 +22,30 @@ final class PostsTest extends TestCase
         $response = $this->get('/admin');
         $response
             ->assertSeeInOrder(['First post', 'Second post']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_logs_error_when_listing_posts_fail()
+    {
+        $this->login();
+        $this->instance(
+            LoggerInterface::class,
+            Mockery::mock(LoggerInterface::class, function (MockInterface $mock) {
+                $mock->shouldReceive('error')->once();
+            })
+        );
+        $this->instance(
+            Post::class,
+            Mockery::mock(Post::class, function (MockInterface $mock) {
+                $mock->shouldReceive('all')->once()->andReturnUsing(function () {
+                    throw new \Exception('Testing');
+                });
+            })
+        );
+
+        $this->get('/admin');
     }
 
     /**
