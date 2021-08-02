@@ -88,7 +88,7 @@ final class AdminPostsController extends Controller
             );
             $post->save();
 
-            return redirect("/admin/{$id}")->with('success', 'Post created');
+            return redirect("/admin/{$id}")->with('success', 'Post save');
         } catch (ValidationException $e) {
             return redirect('/admin')->withErrors($e->errors());
         } catch (\Throwable $e) {
@@ -124,7 +124,7 @@ final class AdminPostsController extends Controller
 
             return redirect("/admin/{$post->id}")->with('success', 'Post created');
         } catch (ValidationException $e) {
-            return redirect('/admin')->withErrors($e->errors());
+            return redirect('/admin/create')->withErrors($e->errors());
         } catch (\Throwable $e) {
             $this->logger->error("Error creating a post", [
                 "e" => $e->getMessage(),
