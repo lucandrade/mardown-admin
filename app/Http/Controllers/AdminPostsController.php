@@ -88,7 +88,7 @@ final class AdminPostsController extends Controller
             );
             $post->save();
 
-            return redirect("/admin/{$id}")->with('success', 'Post save');
+            return redirect("/admin/{$id}")->with('success', 'Post saved');
         } catch (ValidationException $e) {
             return redirect('/admin')->withErrors($e->errors());
         } catch (\Throwable $e) {
