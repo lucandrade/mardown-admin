@@ -44,5 +44,10 @@ export default {
       this.content = e.target.value;
     }, 300)
   },
+  mounted() {
+    if (window.postData && window.postData.id && window.postData.markdown_content) {
+      this.content = window.postData.markdown_content;
+    }
+  }
 }
 </script>

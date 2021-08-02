@@ -48,7 +48,7 @@ final class AdminPostsController extends Controller
         try {
             $post = $this->repository->find($id);
 
-            return response(view('post', [
+            return response(view('admin.post-form', [
                 'post' => $post,
             ]), $post ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Throwable $e) {
