@@ -8,6 +8,8 @@
   * `npm install && npm run dev`
 * Set up the database
   * `php artisan migrate`
+* Create a user
+  * `php artisan app:user:create {username} {password}`
 * Start the application
   * `php artisan serve`
 
