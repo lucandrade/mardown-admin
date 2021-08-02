@@ -10,9 +10,7 @@
 <body>
   @include('components.admin-header')
   <section class="container">
-    <div id="app">
-      @yield('content')
-    </div>
+    @yield('content')
   </section>
   <script src="{{ mix('js/app.js') }}"></script>
 </body>

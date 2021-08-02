@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('content')
-  <post-form></post-form>
+  <div id="app">
+    <post-form></post-form>
+  </div>
   <script>
     window.postData = @json($post ?? []);
   </script>

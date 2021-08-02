@@ -1,5 +1,5 @@
 <template>
-  <form action="/admin" method="post">
+  <form :action="id ? '/admin/' + id : '/admin'" method="post">
     <input type="hidden" name="_token" :value="csrf" />
     <input type="hidden" name="html_content" :value="content" />
     <div class="row my-4">
@@ -31,6 +31,7 @@ import Marked from 'marked';
 export default {
   name: "PostForm",
   data: () => ({
+    id: null,
     content: '',
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
   }),
@@ -45,8 +46,12 @@ export default {
     }, 300)
   },
   mounted() {
-    if (window.postData && window.postData.id && window.postData.markdown_content) {
+    if (window.postData && window.postData.markdown_content) {
       this.content = window.postData.markdown_content;
+    }
+
+    if (window.postData && window.postData.id) {
+      this.id = window.postData.id;
     }
   }
 }
