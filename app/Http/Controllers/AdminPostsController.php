@@ -29,7 +29,7 @@ final class AdminPostsController extends Controller
         try {
             $posts = $this->repository->all();
 
-            return response(view('posts', [
+            return response(view('admin.posts', [
                 'posts' => $posts,
             ]));
         } catch (\Throwable $e) {
