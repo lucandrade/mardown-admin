@@ -13,6 +13,9 @@ Route::post('/login', [Controllers\AuthController::class, 'login'])->name('login
 Route::get('/logout', [Controllers\AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [Controllers\AdminPostsController::class, 'index']);
+    Route::get('/admin/create', function () {
+        return view('admin/post-form');
+    });
     Route::post('/admin', [Controllers\AdminPostsController::class, 'create']);
     Route::get('/admin/{id}', [Controllers\AdminPostsController::class, 'get']);
     Route::post('/admin/{id}', [Controllers\AdminPostsController::class, 'update']);

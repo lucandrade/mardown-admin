@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ $title ?? 'Admin Markdown' }}</title>
-  <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
+  <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
 </head>
 <body>
   @include('components.admin-header')
-  <section class="container-fluid">
+  <section class="container">
     @yield('content')
   </section>
+  <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>
