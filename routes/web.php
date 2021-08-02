@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [Controllers\PostsController::class, 'index']);
 Route::get('/login', function () {
     return view('login');
 });
