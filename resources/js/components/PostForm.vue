@@ -1,7 +1,7 @@
 <template>
   <form :action="id ? '/admin/' + id : '/admin'" method="post">
     <input type="hidden" name="_token" :value="csrf" />
-    <input type="hidden" name="html_content" :value="content" />
+    <input type="hidden" name="html_content" :value="compiled" />
     <div class="row my-4">
       <div class="col">
         <label for="markdown_content" class="form-label">Markdown content</label>
